@@ -40,3 +40,7 @@ I'd swap in **ICE Gasoil** (the European benchmark) or Platts/Argus assessments.
 - **Phase 2** — backtest engine for a mean-reversion crack strategy (with costs, honest evaluation)
 - **Phase 3** — Monte-Carlo fuel-hedging simulator + position-keeping & VaR
 - **Phase 4** — biofuel/FuelEU blend economics, or option pricing (Black-76)
+
+## Observations
+
+- In late April 2026 the diesel-jet spread narrowed a lot and go inverse, collapsing from spreads 0.25 to -0.051 in start May. I also tracked the z score to collapse to a -4
