@@ -28,6 +28,7 @@ MANIFEST
 .vs/
 env/
 .venv/
+.vs
 
 
 # PyInstaller
