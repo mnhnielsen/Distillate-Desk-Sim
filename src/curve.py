@@ -74,7 +74,7 @@ def plot_curve(curve: pd.DataFrame) -> None:
     
     
 
-curve = curve_snapshot("HO", months=7)
-print(curve)
-print("Shape:", classify_snapshot(curve))
-plot_curve(curve)
+# curve = curve_snapshot("HO", months=7)
+# print(curve)
+# print("Shape:", classify_snapshot(curve))
+# plot_curve(curve)

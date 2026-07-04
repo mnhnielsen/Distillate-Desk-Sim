@@ -26,4 +26,4 @@ TICKERS = {
 GALLONS_PER_BARREL = 42      # 1 US barrel = 42 US gallons
 
 # --- History ---
-START_DATE = "2025-12-01"
+START_DATE = "2010-12-01"

@@ -30,9 +30,9 @@ def fetch_prices(tickers: dict[str, str], start: str) -> pd.DataFrame:
     print(f"Fetching prices from {config.START_DATE} to today...")
     frames = {}
     for name, ticker in tickers.items():
-        raw = yf.download(ticker, start=start, progress=False, auto_adjust=False)
+        raw = yf.download(ticker, start=start, progress=False, interval='5D', auto_adjust=False)
         if raw.empty:
-            raw = eia.get_distillate_spot_prices(id=ticker, start_date="2025-12-01", end_date=None, frequency='weekly')
+            raw = eia.get_distillate_spot_prices(id=ticker, start_date=start, end_date=None, frequency='monthly')
             if raw.empty:
                  raise RuntimeError(f"No data returned for {ticker} ({name}).")
             frames[name]=_close_series(raw)

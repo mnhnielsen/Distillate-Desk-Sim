@@ -40,7 +40,7 @@ def term_structure(front, back) -> float:
 def classify_term_structure(front, back) -> str:
     diff = term_structure(front, back)
     if diff > 0:
-        return "backwardation"
+        return "Backwardation"
     elif diff < 0:
-        return "contango"
-    return "flat"
+        return "Contango"
+    return "Flat"

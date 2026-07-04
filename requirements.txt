@@ -6,3 +6,4 @@ matplotlib>=3.7
 pytest>=8.0
 myeia>=0.4.8
 pandas>=3.0.3
+streamlit>=1.58.0
