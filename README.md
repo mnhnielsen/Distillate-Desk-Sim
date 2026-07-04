@@ -1,38 +1,24 @@
 # DistillateDesk
 
-A mini "trading desk" for middle distillates — built to show I can **code like an
-engineer and think like an energy trader**. It ingests crude and distillate prices,
+A mini "trading desk" for middle distillates. It ingests crude and middle distillate prices, such as Diesel and Jetfuel
 builds crack spreads, and (over the coming phases) backtests a strategy and runs a
 fuel-hedging simulator.
 
-> Full build plan and rationale: see `distillate-desk-project-spec.md`.
-
-## Quickstart
-
-```bash
-python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-python -m src.ingest    # pull Brent + distillate prices -> data/prices.parquet
-python -m src.plot      # write crack_overview.png
-pytest                  # run the analytics tests
-```
-
-## What's here (Phase 0–1)
-
-| File | Does |
-|---|---|
-| `src/config.py` | Tickers, units (42 gal/bbl), date range, paths |
-| `src/ingest.py` | Download daily prices from Yahoo Finance, store as parquet |
-| `src/analytics.py` | Pure functions: gallons→barrel, crack spread, rolling z-score |
-| `src/plot.py` | Quick crude-vs-distillate + crack-spread chart |
-| `tests/` | Unit tests for the analytics |
+Full build plan and rationale: see `distillate-desk-project-spec.md`.
 
 ## Data note
 
 `HO=F` (NY Harbor ULSD / heating oil) is an accessible **distillate proxy**, quoted in
 USD/gallon — converted to USD/barrel before computing the crack. In a production setting
 I'd swap in **ICE Gasoil** (the European benchmark) or Platts/Argus assessments.
+
+Data are mainly from Yahoo Finance for Heating Oil and general oil prices but they don't carry prices for distillates. These prices come from EIA.
+
+Symbols from EIA:
+
+`JETFUEL = "EER_EPJK_PF4_RGC_DPG"`
+
+`DIESEL = "EER_EPD2DXL0_PF4_Y35NY_DPG"`
 
 ## Roadmap
 
@@ -44,3 +30,4 @@ I'd swap in **ICE Gasoil** (the European benchmark) or Platts/Argus assessments.
 ## Observations
 
 - In late April 2026 the diesel-jet spread narrowed a lot and go inverse, collapsing from spreads 0.25 to -0.051 in start May. I also tracked the z score to collapse to a -4
+- As of this run (July 26), the market reading from my function is that heating oil curve based on the future prices is in backwardation, meaning the markets paying a premium for promt barrels over deffered barrels, meaning a near-term tightness.
