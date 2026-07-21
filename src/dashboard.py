@@ -17,23 +17,28 @@ st.set_page_config(page_title="DistillateDesk", layout="wide")
 
 
 def diesel_jet_spread_zscore(prices: pd.DataFrame) -> pd.Series:
-    dieselbbl = analytics.gallons_to_barrel(prices["diesel_jet"])
-    jetbbl = analytics.gallons_to_barrel(prices["jet_fuel"])
-    
-    diesel_jet_spread = analytics.diesel_jet_spread(dieselbbl, jetbbl)
-    diesel_jet_zscore = analytics.zscore(diesel_jet_spread)
-    return diesel_jet_zscore
+    diesel_jet = diesel_jet_spread(prices)
+    return analytics.zscore(diesel_jet)
 
-def diesel_jet_spread_spread(prices: pd.DataFrame) -> pd.Series:
-    dieselbbl = analytics.gallons_to_barrel(prices["diesel_jet"])
+def diesel_jet_spread(prices: pd.DataFrame) -> pd.Series:
+    dieselbbl = analytics.gallons_to_barrel(prices["diesel"])
     jetbbl = analytics.gallons_to_barrel(prices["jet_fuel"])
-    
-    diesel_jet_spread = analytics.diesel_jet_spread(dieselbbl, jetbbl)
-    return diesel_jet_spread
+    return analytics.diesel_jet_spread(dieselbbl, jetbbl)
 
 @st.cache_data
 def load_prices() -> pd.DataFrame:
     return pd.read_parquet(config.PRICES_FILE)
+
+@st.cache_data(ttl=3600)
+def load_curve(root: str, months: int) -> pd.DataFrame:
+    return cv.curve_snapshot(root, months)
+
+n_months = st.sidebar.slider(
+    "Curve length (contracts)",
+    min_value=2, max_value=12, value=6,
+)
+
+curve = load_curve("HO", n_months)
 
 
 st.title("Distillate Desk")
@@ -48,9 +53,9 @@ except FileNotFoundError:
 in_bbl = pd.DataFrame({
     "Brent crude": prices["brent"],
     "Heating oil": analytics.gallons_to_barrel(prices["heating_oil"]),
-    "Diesel":      analytics.gallons_to_barrel(prices["diesel_jet"]),
+    "Diesel":      analytics.gallons_to_barrel(prices["diesel"]),
     "Jet fuel":    analytics.gallons_to_barrel(prices["jet_fuel"]),
-    "Diesel-jet spread": diesel_jet_spread_spread(prices),
+    "Diesel-jet spread": diesel_jet_spread(prices),
     "Diesel-jet z-score": diesel_jet_spread_zscore(prices),
 })
 
@@ -79,10 +84,10 @@ st.line_chart(view["Diesel-jet spread"])
 st.subheader("Diesel-jet spread z-score")
 st.line_chart(view["Diesel-jet z-score"])
 
-curve = cv.curve_snapshot("HO", 6)
+
 characteristic = cv.classify_snapshot(curve)
 
-st.subheader(f"Heating oil term structure (next 6 contracts): {characteristic}")
+st.subheader(f"Heating oil term structure (next {n_months} contracts): {characteristic}")
 chart = (
     alt.Chart(curve)
     .mark_line(point=True)

@@ -14,11 +14,14 @@ I'd swap in **ICE Gasoil** (the European benchmark) or Platts/Argus assessments.
 
 Data are mainly from Yahoo Finance for Heating Oil and general oil prices but they don't carry prices for distillates. These prices come from EIA.
 
-Symbols from EIA:
+Symbols from EIA (diesel and jet are both **US Gulf Coast**, so the diesel–jet spread is a
+clean product spread; NY Harbor diesel is kept separately to study the location spread):
 
-`JETFUEL = "EER_EPJK_PF4_RGC_DPG"`
+`JETFUEL = "EER_EPJK_PF4_RGC_DPG"` — jet fuel, US Gulf Coast
 
-`DIESEL = "EER_EPD2DXL0_PF4_Y35NY_DPG"`
+`DIESEL = "EER_EPD2DXL0_PF4_RGC_DPG"` — ULSD, US Gulf Coast
+
+`DIESEL_NYH = "EER_EPD2DXL0_PF4_Y35NY_DPG"` — ULSD, NY Harbor
 
 ## Roadmap
 
@@ -29,5 +32,11 @@ Symbols from EIA:
 
 ## Observations
 
-- In late April 2026 the diesel-jet spread narrowed a lot and go inverse, collapsing from spreads 0.25 to -0.051 in start May. I also tracked the z score to collapse to a -4
-- As of this run (July 26), the market reading from my function is that heating oil curve based on the future prices is in backwardation, meaning the markets paying a premium for promt barrels over deffered barrels, meaning a near-term tightness.
+Dated research notes live in [RESEARCH.md](RESEARCH.md). Headlines so far:
+
+- The April–May 2026 diesel–jet inversion bottomed at **−11.55 $/bbl** — and was ~3× deeper
+  than my first (cross-regional) measurement showed, a lesson in separating product basis
+  from locational basis.
+- The distillate crack is at the **99.6th percentile** of its history with the HO curve in
+  backwardation — the market is paying a premium for prompt barrels over deferred, a
+  2022-style near-term tightness.

@@ -6,27 +6,20 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import pandas as pd
-
-from . import analytics, config
-
+import config
+import analytics
 
 def load_prices() -> pd.DataFrame:
     return pd.read_parquet(config.PRICES_FILE)
 
 def diesel_jet_spread_zscore(prices: pd.DataFrame) -> pd.Series:
-    dieselbbl = analytics.gallons_to_barrel(prices["diesel_jet"])
-    jetbbl = analytics.gallons_to_barrel(prices["jet_fuel"])
-    
-    diesel_jet_spread = analytics.diesel_jet_spread(dieselbbl, jetbbl)
-    diesel_jet_zscore = analytics.zscore(diesel_jet_spread)
-    return diesel_jet_zscore
+    diesel_jet = diesel_jet_spread(prices)
+    return analytics.zscore(diesel_jet)
 
-def diesel_jet_spread_spread(prices: pd.DataFrame) -> pd.Series:
-    dieselbbl = analytics.gallons_to_barrel(prices["diesel_jet"])
+def diesel_jet_spread(prices: pd.DataFrame) -> pd.Series:
+    dieselbbl = analytics.gallons_to_barrel(prices["diesel"])
     jetbbl = analytics.gallons_to_barrel(prices["jet_fuel"])
-    
-    diesel_jet_spread = analytics.diesel_jet_spread(dieselbbl, jetbbl)
-    return diesel_jet_spread
+    return analytics.diesel_jet_spread(dieselbbl, jetbbl)
 
 
 def main() -> None:

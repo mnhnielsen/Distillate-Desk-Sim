@@ -1,14 +1,23 @@
 from myeia import API
 import pandas as pd
 
-eia = API()
+_eia: API | None = None
+
+
+def _client() -> API:
+    """Create the EIA client on first use, so importing this module
+    doesn't require the API key to be configured."""
+    global _eia
+    if _eia is None:
+        _eia = API()
+    return _eia
+
 
 def get_diesel_spot_prices(start_date: str, end_date: str, frequency: str) -> pd.DataFrame:
     """Fetch diesel spot prices from EIA API."""
-    
     route = "petroleum/pri/spt"
     id='EER_EPD2DXL0_PF4_Y35NY_DPG'
-    df = eia.get_series_via_route(
+    df = _client().get_series_via_route(
         route=route,
         series=id,
         frequency=frequency,
@@ -24,7 +33,7 @@ def get_jetfuel_spot_prices(start_date: str, end_date: str, frequency: str) -> p
     
     route = "petroleum/pri/spt"
     id = "EER_EPJK_PF4_RGC_DPG"
-    df = eia.get_series_via_route(
+    df = _client().get_series_via_route(
         route=route,
         series=id,
         frequency=frequency,
@@ -37,7 +46,7 @@ def get_jetfuel_spot_prices(start_date: str, end_date: str, frequency: str) -> p
 def get_distillate_spot_prices(id: str, start_date: str, end_date: str, frequency: str) -> pd.DataFrame:
     """Fetch distillate spot prices from EIA API."""
     route = "petroleum/pri/spt"
-    df = eia.get_series_via_route(
+    df = _client().get_series_via_route(
         route=route,
         series=id,
         frequency=frequency,

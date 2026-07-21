@@ -12,13 +12,21 @@ PRICES_FILE = DATA_DIR / "prices.parquet"
 # accessible middle-distillate proxy. Swap in ICE Gasoil / Platts data later.
 CRUDE_TICKER = "BZ=F"        # Brent crude  -> quoted in USD/BARREL
 DISTILLATE_TICKER = "HO=F"   # ULSD         -> quoted in USD/GALLON
-JETFUEL_TICKER = "EER_EPJK_PF4_RGC_DPG"      # Jet fuel     -> quoted in USD/GALLON
-DIESEL_TICKER = "EER_EPD2DXL0_PF4_Y35NY_DPG"   # Diesel       -> quoted in USD/GALLON
+JETFUEL_TICKER = "EER_EPJK_PF4_RGC_DPG"        # Jet fuel, US Gulf Coast   -> USD/GALLON
+DIESEL_TICKER = "EER_EPD2DXL0_PF4_RGC_DPG"     # ULSD diesel, US Gulf Coast -> USD/GALLON
+DIESEL_NYH_TICKER = "EER_EPD2DXL0_PF4_Y35NY_DPG"  # ULSD diesel, NY Harbor -> USD/GALLON
+
+# Diesel and jet are both US Gulf Coast so the diesel-jet spread is a clean
+# product spread; the NY Harbor diesel series is kept so the NYH-USGC
+# *location* spread can be studied separately.
+# Each instrument declares its data source, so ingest dispatches explicitly
+# instead of trying Yahoo first and falling back on an empty response.
 TICKERS = {
-    "brent": CRUDE_TICKER,
-    "heating_oil": DISTILLATE_TICKER,
-    "diesel_jet": DIESEL_TICKER,
-    "jet_fuel": JETFUEL_TICKER
+    "brent":       ("yahoo", CRUDE_TICKER),
+    "heating_oil": ("yahoo", DISTILLATE_TICKER),
+    "diesel":      ("eia", DIESEL_TICKER),
+    "diesel_nyh":  ("eia", DIESEL_NYH_TICKER),
+    "jet_fuel":    ("eia", JETFUEL_TICKER),
 }
 
 

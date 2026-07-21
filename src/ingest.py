@@ -3,12 +3,11 @@
 Run from the repo root:  python -m src.ingest
 """
 from __future__ import annotations
-import time
 
 import pandas as pd
 import yfinance as yf
-from . import eia_data as eia
-from . import config
+import eia_data as eia
+import config
 
 
 def _close_series_yf(raw: pd.DataFrame) -> pd.Series:
@@ -25,19 +24,28 @@ def _close_series(raw: pd.DataFrame) -> pd.Series:
     return close
 
 
-def fetch_prices(tickers: dict[str, str], start: str) -> pd.DataFrame:
-    """Download daily close prices; return one column per instrument."""
-    print(f"Fetching prices from {config.START_DATE} to today...")
+def fetch_prices(tickers: dict[str, tuple[str, str]], start: str) -> pd.DataFrame:
+    """Download daily close prices; return one column per instrument.
+
+    Each ticker entry is a (source, symbol) pair — "yahoo" or "eia" — so a
+    bad or empty response from one source fails loudly instead of silently
+    being retried against the other.
+    """
+    print(f"Fetching prices from {start} to today...")
     frames = {}
-    for name, ticker in tickers.items():
-        raw = yf.download(ticker, start=start, progress=False, interval='5D', auto_adjust=False)
-        if raw.empty:
-            raw = eia.get_distillate_spot_prices(id=ticker, start_date=start, end_date=None, frequency='monthly')
+    for name, (source, ticker) in tickers.items():
+        if source == "yahoo":
+            raw = yf.download(ticker, start=start, progress=False, interval='1D', auto_adjust=False)
             if raw.empty:
-                 raise RuntimeError(f"No data returned for {ticker} ({name}).")
-            frames[name]=_close_series(raw)
-            continue
-        frames[name] = _close_series_yf(raw)
+                raise RuntimeError(f"No data returned for {ticker} ({name}).")
+            frames[name] = _close_series_yf(raw)
+        elif source == "eia":
+            raw = eia.get_distillate_spot_prices(id=ticker, start_date=start, end_date=None, frequency='daily')
+            if raw.empty:
+                raise RuntimeError(f"No data returned for {ticker} ({name}).")
+            frames[name] = _close_series(raw)
+        else:
+            raise ValueError(f"Unknown data source {source!r} for {name}.")
     prices = pd.concat(frames, axis=1)
     prices.columns = list(tickers.keys())
     return prices.dropna(how="all").ffill()
